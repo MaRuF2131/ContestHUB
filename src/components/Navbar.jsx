@@ -17,8 +17,8 @@ ContestHub
 
 <div className="space-x-6 text-black dark:text-white font-medium">
 <Link to="/">Home</Link>
-<Link to="/all-contests">All Contests</Link>
-<Link to="/leaderboard">Leaderboard</Link>
+ <Link to="/all-contests">All Contests</Link>
+<Link to="/leaderboard">Leaderboard</Link> 
 </div>
 </motion.nav>
 );
