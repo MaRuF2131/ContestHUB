@@ -1,0 +1,24 @@
+[
+    {
+      "id": "w1",
+      "name": "Aisha Rahman",
+      "contest": "Creative Logo Design Contest",
+      "prize": "$500",
+      "image": "https://i.ibb.co/2grJYVd/winner1.jpg"
+    },
+    {
+      "id": "w2",
+      "name": "John Michael",
+      "contest": "AI Article Writing Challenge",
+      "prize": "$300",
+      "image": "https://i.ibb.co/YfrKL8q/winner2.jpg"
+    },
+    {
+      "id": "w3",
+      "name": "Samiul Islam",
+      "contest": "Gaming Review Showdown",
+      "prize": "$200",
+      "image": "https://i.ibb.co/6vpd7KM/winner3.jpg"
+    }
+  ]
+  
