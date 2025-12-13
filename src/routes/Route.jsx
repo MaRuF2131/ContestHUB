@@ -3,6 +3,7 @@ import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
 import Contest from "../pages/Contest";
 import MainLayout from "../layout/MainLayout";
+import Details from "../pages/Details";
 
 
  export const Route=createBrowserRouter([
@@ -16,8 +17,12 @@ import MainLayout from "../layout/MainLayout";
           element:<Home></Home>
         },
         {
-          path:'/contest',
+          path:'/all-contest',
           element:<Contest></Contest>
+        },
+        {
+          path:'/contest/:id',
+          element:<Details></Details>
         },
       ]
     },
