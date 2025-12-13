@@ -7,12 +7,10 @@ import WinnerAdvertisement from '../components/home/sections/WinnerAdvertisement
 function Home() {
   return (
     <div>
-        <Navbar></Navbar>
         <Banner></Banner>
         <PopularContest></PopularContest>
         <WinnerAdvertisement></WinnerAdvertisement>
         <ExtraSection></ExtraSection>
-        <Footer></Footer>
     </div>
   )
 }

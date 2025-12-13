@@ -18,7 +18,7 @@ return (
 initial={{ opacity: 0 }}
 animate={{ opacity: 1 }}
 transition={{ duration: 0.7 }}
-className="h-[380px] mt-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex flex-col justify-center items-center text-white"
+className="h-[380px]  bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex flex-col justify-center items-center text-white"
 >
 <h1 className="text-4xl font-bold mb-4">Discover Amazing Contests</h1>
 <p className="opacity-90 mb-6">Find the best contests & show your creativity!</p>

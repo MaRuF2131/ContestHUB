@@ -38,6 +38,42 @@
       "participants": 96,
       "shortDesc": "Pitch a unique business idea that solves a real-world problem.",
       "type": "Business Idea"
-    }
+    },
+     {
+    "_id": "1",
+    "name": "Creative Logo Design Contest",
+    "image": "https://i.ibb.co/PGHZPzS/logo-design.jpg",
+    "participants": 189,
+    "shortDesc": "Design a modern startup logo focusing on creativity and brand identity.",
+    "type": "Image Design",
+    "approved": true
+  },
+  {
+    "_id": "2",
+    "name": "AI Article Writing Challenge",
+    "image": "https://i.ibb.co/YZFJszB/article-writing.jpg",
+    "participants": 152,
+    "shortDesc": "Write an engaging article on AI trends and future opportunities.",
+    "type": "Article Writing",
+    "approved": true
+  },
+  {
+    "_id": "3",
+    "name": "Startup Business Idea Pitch",
+    "image": "https://i.ibb.co/Dg9cSqh/business-ideas.jpg",
+    "participants": 96,
+    "shortDesc": "Pitch a unique business idea that solves a real-world problem.",
+    "type": "Business Idea",
+    "approved": true
+  },
+  {
+    "_id": "4",
+    "name": "Gaming Review Showdown",
+    "image": "https://i.ibb.co/jZ6fcbL/gaming-review.jpg",
+    "participants": 120,
+    "shortDesc": "Submit a creative review of your favorite game.",
+    "type": "Gaming Review",
+    "approved": true
+  }
   ]
   
