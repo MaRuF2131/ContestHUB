@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import winners from "../../../demoData/winners.json";
+import winners from "../../../../demoData/winners.json";
 
 const WinnerAdvertisement = () => {
   return (

@@ -1,9 +1,9 @@
-import Banner from '../components/Banner'
-import Footer from '../components/Footer'
-import Navbar from '../components/Navbar'
-import ExtraSection from '../components/sections/ExtraSection'
-import PopularContest from '../components/sections/PopularContest'
-import WinnerAdvertisement from '../components/sections/WinnerAdvertisement'
+import Banner from '../components/home/Banner'
+import Footer from '../components/common/Footer'
+import Navbar from '../components/common/Navbar'
+import ExtraSection from '../components/home/sections/ExtraSection'
+import PopularContest from '../components/home/sections/PopularContest'
+import WinnerAdvertisement from '../components/home/sections/WinnerAdvertisement'
 function Home() {
   return (
     <div>
