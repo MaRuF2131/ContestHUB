@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axiosInstance, { setUserInterceptor } from '../utils/axios';
+import axiosInstance, { setUserInterceptor } from '../utils/api/axios.jsx';
 import {
   auth,
   signInWithPopup,

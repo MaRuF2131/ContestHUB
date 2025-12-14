@@ -4,6 +4,8 @@ import NotFound from "../pages/NotFound";
 import Contest from "../pages/Contest";
 import MainLayout from "../layout/MainLayout";
 import Details from "../pages/Details";
+import Login from "../pages/auth/Login";
+import Register from "../pages/auth/Register";
 
 
  export const Route=createBrowserRouter([
@@ -23,6 +25,14 @@ import Details from "../pages/Details";
         {
           path:'/contest/:id',
           element:<Details></Details>
+        },
+        {
+          path:'/login',
+          element:<Login></Login>
+        },
+        {
+          path:'/register',
+          element:<Register></Register>
         },
       ]
     },

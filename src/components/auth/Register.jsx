@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
-import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
-import useAuth from '../../hook/UseAuth.jsx';
+import useAuth from '../../hook/UseAuth';
 import {
   EmailValidationCheck,
   PasswordValidationCheck,
+  UrlValidationCheck,
 } from '../../utils/custom-validation/CustomValidation.jsx';
+import { userNameValidation } from '../../utils/built-in-validation/built-in-validation.jsx';
 
-const Login = () => {
-  const { loginWithGoogle, loginWithEmail } = useAuth();
+const Register = () => {
+  const { registerWithEmail } = useAuth();
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -28,35 +29,38 @@ const Login = () => {
   });
 
   const onSubmit = async (data) => {
-    const { email, password } = data;
+    const { name, email, password, photoURL } = data;
     try {
-      await loginWithEmail(email, password);
-      toast.success('Login successful! 🎉');
-      navigate('/');
-    } catch (err) {
-      console.log(err);
-      toast.error('Login failed!');
-      setError(err.message);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      await loginWithGoogle();
-      toast.success('Logged in with Google! 🎉');
+      await registerWithEmail(email, password, name, photoURL);
+      toast.success('Registration successful! 🎉');
+      reset();
       navigate('/');
     } catch (err) {
       console.error(err);
-      toast.error('Google Sign-in failed!');
+      toast.error(err.message || 'Registration failed!');
       setError(err.message);
     }
   };
 
   return (
     <div className=" flex flex-col justify-center items-center max-w-lg dark:bg-black/50 bg-white/5 p-8  backdrop-blur-md rounded-md shadow-md border-1 border-blue-700 dark:text-white text-black space-y-2">
-      <h1 className=" text-3xl font-bold text-shadow-md text-shadow-blue-700">Login to your account</h1>
+      <h1 className="text-3xl font-bold text-shadow-md text-shadow-blue-700">Register a new account</h1>
 
       <form className="flex flex-col justify-center items-center w-full" onSubmit={handleSubmit(onSubmit)}>
+        {/* Name */}
+        <div className='w-full p-1 rounded space-y-1 '>
+          <input
+            {...register('name', { required: 'Name is required',...userNameValidation })}
+            className="w-full p-2 border rounded"
+            placeholder="Enter your name"
+          />
+          {errors.name && (
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <FaTimesCircle /> {errors.name.message}
+            </p>
+          )}
+        </div>
+
         {/* Email */}
         <div className='w-full p-1 rounded space-y-1 '>
           <input
@@ -105,7 +109,7 @@ const Login = () => {
               {errors.password?.types?.islength ? <FaTimesCircle /> : <FaCheckCircle />}
               <p>Password must be at least 6 characters</p>
             </div>
-            <div className={`inline-flex items-center justify-between gap-2 ${errors.password?.types?.isuppercase ? 'text-red-700' : 'text-blue-700'}`}>
+            <div className={`inline-flex items-center justify-between  gap-2 ${errors.password?.types?.isuppercase ? 'text-red-700' : 'text-blue-700'}`}>
               {errors.password?.types?.isuppercase ? <FaTimesCircle /> : <FaCheckCircle />}
               <p>Must include 1 uppercase letter</p>
             </div>
@@ -120,26 +124,39 @@ const Login = () => {
           </div>
         </div>
 
+        {/* Photo URL */}
+        <div className='w-full p-1 rounded space-y-1 '>
+          <input
+            {...register('photoURL', {
+              required: 'Photo URL is required',
+              ...UrlValidationCheck,
+            })}
+            className="w-full p-2 border rounded"
+            placeholder="Enter photo URL"
+          />
+          {errors.photoURL && (
+            <p className="text-red-600 text-sm mt-1 flex items-center gap-1">
+              <FaTimesCircle /> {errors.photoURL.message}
+            </p>
+          )}
+        </div>
+
         {/* Submit Button */}
         <button
           type="submit"
           disabled={isSubmitting || !isValid}
-          className={`cursor-pointer border-1 border-blue-700 bg-blue-700 hover:bg-blue-500 rounded-md px-5 py-1 ${isSubmitting || !isValid ? 'opacity-30 cursor-not-allowed' : ''}`}
+          className={`cursor-pointer border-1 border-blue-700 bg-blue-700 hover:bg-blue-500 rounded-md px-5 py-1 mt-5 ${(isSubmitting || !isValid) ? 'opacity-30 cursor-none' : ''}`}
         >
-          Login
+          Register
         </button>
       </form>
 
-      {/* Google Login */}
-      <button className="cursor-pointer" onClick={handleGoogleSignIn}>
-        <span className="inline-flex items-center justify-center">
-          <FcGoogle className="text-3xl" /> Login with Google
-        </span>
-      </button>
-
       {/* Navigation Links */}
       <p className="mt-4 text-center">
-        Don’t have an account? <Link to="/register" className="text-blue-600 underline">Register</Link>
+        Already have an account?{' '}
+        <Link to="/login" className="text-blue-600 underline">
+          Login
+        </Link>
       </p>
 
       {/* Home Button */}
@@ -154,4 +171,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;
