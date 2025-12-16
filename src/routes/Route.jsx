@@ -6,6 +6,8 @@ import MainLayout from "../layout/MainLayout";
 import Details from "../pages/Details";
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
+import DashboardLayout from "../layout/DashboardLayout";
+import DashboardHome from "../components/dashboard/common/DashboardHome";
 
 
  export const Route=createBrowserRouter([
@@ -33,6 +35,16 @@ import Register from "../pages/auth/Register";
         {
           path:'/register',
           element:<Register></Register>
+        },
+      ]
+    },
+    {
+      path:'/dashboard',
+      element:<DashboardLayout></DashboardLayout>,
+      children:[
+        {
+          index:true,
+          element:<DashboardHome></DashboardHome>
         },
       ]
     },
