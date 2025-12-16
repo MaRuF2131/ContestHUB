@@ -62,8 +62,8 @@ export const NumberValidationCheck={
                 return resolve("Must be at least 1");
               }
 
-              if (num > 100) {
-                return resolve("Cannot exceed 100");
+              if (num > 10000) {
+                return resolve("Cannot exceed 10000");
               }
 
               if (!Number.isInteger(num) || await DangerousContentCheck.validate(v) !== true) {
@@ -211,4 +211,25 @@ export const ColorValidationCheck = {
     );
   },
 };
+
+export const FilCheck={
+  validate:async(v)=>{
+    return await new Promise((resolve)=>{
+      setTimeout(async()=>{
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/webp'];
+        if(v.length===0){
+          return resolve("File is required");
+        }
+        const file=v[0];
+        if(!allowedTypes.includes(file.type)){
+          return resolve("Only JPG, PNG, jpg, webp and GIF files are allowed");
+        } 
+        if(file.size>5*1024*1024){
+          return resolve("File size must be less than 10MB");
+        } 
+        resolve(true);
+      },100)
+    })
+  }
+}
 

@@ -1,39 +1,54 @@
-import { useForm } from "react-hook-form";
+import { useForm,} from "react-hook-form";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useState } from "react";
-import { PlusCircle } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ImagePlus, PlusCircle, X } from "lucide-react";
 import toast from "react-hot-toast";
+import { DangerousContentCheck, FilCheck, NumberValidationCheck, StringValidationCheck } from "../../../utils/custom-validation/CustomValidation";
+import { PostFunction } from "../../../utils/PostFunction";
 
 const AddContest = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm(
+    {
+      mode:"onChange", 
+      criteriaMode: "all",
+    }
+  );
 
   const [deadline, setDeadline] = useState(null);
 
-  const onSubmit = (data) => {
-    if (!deadline) {
-      toast.error("Please select a deadline");
-      return;
+  const imageFile = watch("image");
+  const [preview, setPreview] = useState(null);
+
+useEffect(() => {
+  if ((!imageFile || imageFile.length === 0 || errors?.image?.message) ) {   
+    setPreview(null);
+    return;
+  }
+
+  const objectUrl = URL.createObjectURL(imageFile[0]);
+  setPreview(objectUrl);
+
+  return () => URL.revokeObjectURL(objectUrl);
+}, [imageFile, errors?.image?.message]);
+
+
+  const onSubmit = async (data) => {
+    try{
+      data.deadline = deadline;
+      const res = await PostFunction("/api/contests", data);
+      toast.success("Contest Added Successfully 🎉");
+      reset();
+      setDeadline(null);
+    }catch(err){
+      toast.error("Failed to add contest. Please try again.");
     }
-
-    const contestData = {
-      ...data,
-      price: Number(data.price),
-      prizeMoney: Number(data.prizeMoney),
-      deadline,
-      participants: 0,
-      status: "active",
-    };
-
-    console.log("Contest Data:", contestData);
-    toast.success("Contest Added Successfully 🎉");
-    reset();
-    setDeadline(null);
   };
 
   return (
@@ -50,31 +65,58 @@ const AddContest = () => {
           <label className="label">Contest Name</label>
           <input
             type="text"
-            {...register("name", { required: "Contest name is required" })}
+            {...register("name", { required: "Contest name is required", ...DangerousContentCheck })}
             className="input"
           />
           {errors.name && <p className="error">{errors.name.message}</p>}
         </div>
 
-        {/* Contest Image */}
+     {/* Image Upload */}
         <div>
-          <label className="label">Image URL</label>
-          <input
-            type="text"
-            {...register("image", { required: "Image is required" })}
-            className="input"
-          />
-          {errors.image && <p className="error">{errors.image.message}</p>}
+          <label className="label">Contest Image</label>
+
+          {!preview ? (
+            <label className="upload-box">
+              <ImagePlus className="w-10 h-10 text-pink-500 mb-2" />
+              <input
+                type="file"
+                accept="image/*"
+                {...register("image", { required: "Image is required", ...FilCheck })} 
+                className="hidden"
+              />
+            </label>
+          ) : (
+            <div className="relative">
+              <img
+                src={preview}
+                className="h-48 w-full object-cover rounded-xl"
+                alt="preview"
+              />
+              <button
+                type="button"
+                onClick={() => reset({ image: null })}
+                className="absolute top-2 right-2 bg-black/60 p-1 rounded-full cursor-pointer"
+              >
+                <X className="w-4 h-4 text-white hover:text-pink-500" />
+              </button>
+            </div>
+          )}
+
+          {errors.image && (
+            <p className="error">{errors.image.message}</p>
+          )}
         </div>
+
 
         {/* Price */}
         <div>
           <label className="label">Entry Price ($)</label>
           <input
             type="number"
-            {...register("price", { required: true })}
+            {...register("price", { required: "Entry price is required", ...NumberValidationCheck })}
             className="input"
           />
+          {errors.price && <p className="error">{errors.price.message}</p>}
         </div>
 
         {/* Prize Money */}
@@ -82,21 +124,23 @@ const AddContest = () => {
           <label className="label">Prize Money ($)</label>
           <input
             type="number"
-            {...register("prizeMoney", { required: true })}
+            {...register("prizeMoney", { required: "Prize money is required", ...NumberValidationCheck })}
             className="input"
           />
+          {errors.prizeMoney && <p className="error">{errors.prizeMoney.message}</p>}
         </div>
 
         {/* Contest Type */}
         <div>
           <label className="label">Contest Type</label>
-          <select {...register("type", { required: true })} className="input">
+          <select {...register("type", { required: "Contest type is required", ...DangerousContentCheck })} className="input">
             <option value="">Select Type</option>
             <option value="Design">Design</option>
             <option value="Development">Development</option>
             <option value="Marketing">Marketing</option>
             <option value="Content Writing">Content Writing</option>
           </select>
+          {errors.type && <p className="error">{errors.type.message}</p>}
         </div>
 
         {/* Deadline */}
@@ -108,6 +152,7 @@ const AddContest = () => {
             className="input"
             placeholderText="Select deadline"
             minDate={new Date()}
+            required="Deadline is required"
           />
         </div>
 
@@ -116,9 +161,10 @@ const AddContest = () => {
           <label className="label">Description</label>
           <textarea
             rows="4"
-            {...register("description", { required: true })}
+            {...register("description", { required: "Description is required" ,...StringValidationCheck })}
             className="input"
           />
+          {errors.description && <p className="error">{errors.description.message}</p>}
         </div>
 
         {/* Task Instruction */}
@@ -126,9 +172,10 @@ const AddContest = () => {
           <label className="label">Task Instruction</label>
           <textarea
             rows="4"
-            {...register("taskInstruction", { required: true })}
+            {...register("taskInstruction", { required: "Task instruction is required", ...StringValidationCheck })}
             className="input"
           />
+          {errors.taskInstruction && <p className="error">{errors.taskInstruction.message}</p>}
         </div>
 
         {/* Submit */}

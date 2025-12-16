@@ -17,6 +17,26 @@
 }
 
 
+.upload-box {
+  @apply flex flex-col items-center justify-center 
+  h-48 w-full
+  cursor-pointer
+  rounded-2xl
+  border-2 border-dashed border-pink-400
+  bg-pink-50/40
+  text-pink-600
+  transition-all duration-300
+  hover:bg-pink-100/60
+  hover:border-pink-500
+  hover:scale-[1.01]
+  dark:border-pink-500
+  dark:bg-pink-500/10
+  dark:text-pink-300
+  dark:hover:bg-pink-500/20;
+}
+
+
+
 .error {
   @apply text-xs text-red-500 mt-1;
 }
