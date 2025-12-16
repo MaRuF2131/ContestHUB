@@ -8,7 +8,8 @@ import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
 import DashboardLayout from "../layout/DashboardLayout";
 import DashboardHome from "../components/dashboard/common/DashboardHome";
-import AddContest from "../components/dashboard/creator/AddContest";
+import AddContest from "../pages/dashboard/creator/AddContest";
+import CreatedContests from "../pages/dashboard/creator/CreatedContests";
 
 
  export const Route=createBrowserRouter([
@@ -50,6 +51,10 @@ import AddContest from "../components/dashboard/creator/AddContest";
         {
           path:'/dashboard/add-contest',
           element:<AddContest></AddContest>
+        },
+        {
+          path:'/dashboard/created-contests',
+          element:<CreatedContests></CreatedContests>
         }
       ]
     },
