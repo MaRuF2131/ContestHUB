@@ -105,7 +105,7 @@ const AddContest = () => {
           <DatePicker
             selected={deadline}
             onChange={(date) => setDeadline(date)}
-            className="input w-full"
+            className="input"
             placeholderText="Select deadline"
             minDate={new Date()}
           />
