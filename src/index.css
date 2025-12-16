@@ -10,3 +10,39 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
+
+.active{
+    @apply  text-lg font-bold  text-blue-700;
+}
+
+.in-active{
+      @apply dark:text-white text-black text-lg font-bold  hover:text-blue-700;
+}
+
+ .active::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    border-radius: 50%;
+    background-image: linear-gradient(to right, #1e3a8a, #60a5fa, #2563eb);
+  }
+
+  .in-active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    height: 2px;
+    width: 0px;
+    border-radius: 50%;
+    background-image: linear-gradient(to right, #1e3a8a, #60a5fa, #2563eb);
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .in-active:hover::after {
+    width:100%;
+  }

@@ -1,48 +1,52 @@
 // ThemeToggle.jsx
-import localforage from 'localforage';
-import { Moon, Sun } from 'lucide-react'; // optional icons
-import { useEffect, useState } from 'react';
+import localforage from "localforage";
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const ThemeToggle = () => {
-  const [darkMode, setDarkMode] = useState(false);
+  const [theme, setTheme] = useState("light"); // 'light' | 'dark'
 
   useEffect(() => {
     const loadTheme = async () => {
-      const savedTheme = await localforage.getItem('theme');
-      const finalTheme = savedTheme || 'light';
+      const savedTheme = await localforage.getItem("theme");
+      const finalTheme = savedTheme || "light";
 
-      // Apply theme class
-      document.documentElement.classList.remove('light', 'dark');
+      document.documentElement.classList.remove("light", "dark");
       document.documentElement.classList.add(finalTheme);
 
-      setDarkMode(finalTheme);
+      setTheme(finalTheme);
     };
 
     loadTheme();
   }, []);
 
   const toggleTheme = async () => {
-    console.log("jklhiojuhiojj")
-    const newTheme = darkMode === 'dark' ? 'light' : 'dark';
+    const newTheme = theme === "dark" ? "light" : "dark";
 
-    // Update DOM
-    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.remove("light", "dark");
     document.documentElement.classList.add(newTheme);
 
-    setDarkMode(newTheme);
-    await localforage.setItem('theme', newTheme);
+    setTheme(newTheme);
+    await localforage.setItem("theme", newTheme);
   };
 
   return (
     <button
       onClick={toggleTheme}
-      className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:scale-105 transition"
-      title={`Switch to ${darkMode==='light' ? 'dark' : 'Light'} mode`}
+      title={`Switch to ${theme === "dark" ? "Light" : "Dark"} mode`}
+      className="
+        relative flex items-center justify-center
+        w-10 h-10 rounded-full
+        bg-zinc-200 dark:bg-zinc-700
+        hover:bg-zinc-300 dark:hover:bg-zinc-600
+        transition-all duration-300 ease-in-out
+        active:scale-95
+      "
     >
-      {darkMode ? (
-        <Sun className="text-yellow-300 w-6 h-6" />
+      {theme === "dark" ? (
+        <Sun className="w-5 h-5 text-yellow-400 transition-transform duration-300 rotate-0" />
       ) : (
-        <Moon className="text-gray-800 w-6 h-6" />
+        <Moon className="w-5 h-5 text-zinc-800 transition-transform duration-300 rotate-0" />
       )}
     </button>
   );
