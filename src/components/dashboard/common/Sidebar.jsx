@@ -60,12 +60,12 @@ export const adminOptions = [
   },
   {
     name: "Manage Users",
-    path: "/dashboard/users",
+    path: "/dashboard/manage-users",
     icon: Users,
   },
   {
     name: "Manage Contests",
-    path: "/dashboard/contests",
+    path: "/dashboard/manage-contests",
     icon: Gavel,
   },
 ];

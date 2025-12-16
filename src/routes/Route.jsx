@@ -12,6 +12,8 @@ import AddContest from "../pages/dashboard/creator/AddContest";
 import CreatedContests from "../pages/dashboard/creator/CreatedContests";
 import SubmittedTasks from "../pages/dashboard/creator/SubmittedTasks";
 import EditContest from "../pages/dashboard/creator/EditContest";
+import ManageUsers from "../pages/dashboard/admin/ManageUsers";
+import ManageContests from "../pages/dashboard/admin/ManageContests";
 
 
  export const Route=createBrowserRouter([
@@ -65,6 +67,14 @@ import EditContest from "../pages/dashboard/creator/EditContest";
         {
           path:'/dashboard/edit-contest',
           element:<EditContest></EditContest>
+        },
+        {
+          path:'/dashboard/manage-users',
+          element:<ManageUsers></ManageUsers>
+        },
+        {
+          path:'/dashboard/manage-contests',
+          element:<ManageContests></ManageContests>
         }
       ]
     },
