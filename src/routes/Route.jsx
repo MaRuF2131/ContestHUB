@@ -10,6 +10,8 @@ import DashboardLayout from "../layout/DashboardLayout";
 import DashboardHome from "../components/dashboard/common/DashboardHome";
 import AddContest from "../pages/dashboard/creator/AddContest";
 import CreatedContests from "../pages/dashboard/creator/CreatedContests";
+import SubmittedTasks from "../pages/dashboard/creator/SubmittedTasks";
+import EditContest from "../pages/dashboard/creator/EditContest";
 
 
  export const Route=createBrowserRouter([
@@ -55,6 +57,14 @@ import CreatedContests from "../pages/dashboard/creator/CreatedContests";
         {
           path:'/dashboard/created-contests',
           element:<CreatedContests></CreatedContests>
+        },
+        {
+          path:'/dashboard/submitted-tasks',
+          element:<SubmittedTasks></SubmittedTasks>
+        },
+        {
+          path:'/dashboard/edit-contest',
+          element:<EditContest></EditContest>
         }
       ]
     },
