@@ -203,7 +203,7 @@ const MyCreatedContests = () => {
 
 
       <div className="overflow-x-auto">
-        <table className="min-w-full table-auto border-collapse border border-zinc-200 dark:border-zinc-700">
+        <table className="min-w-full dark:text-white text-black table-auto border-collapse border border-zinc-200 dark:border-zinc-700">
           <thead>
             <tr className="bg-zinc-100 dark:bg-zinc-800 text-left">
               <th className="px-4 py-2 border-b border-zinc-200 dark:border-zinc-700">Name</th>
