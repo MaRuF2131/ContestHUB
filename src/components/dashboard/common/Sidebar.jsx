@@ -142,7 +142,7 @@ const Sidebar = () => {
         {!user?.role && <TextOrCardLoader />}
 
         {/* Navigation */}
-        <ul className="mt-6 space-y-1">
+     {   user?.role &&   <ul className="mt-6 space-y-1">
           {(user?.role === "user" ? userOptions
             : user?.role === "admin" ? adminOptions
             : creatorOptions
@@ -168,7 +168,7 @@ const Sidebar = () => {
               </NavLink>
             </li>
           ))}
-        </ul>
+        </ul>}
       </div>
 
       {/* Logout */}
