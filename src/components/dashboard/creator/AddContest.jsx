@@ -22,6 +22,7 @@ const AddContest = () => {
   );
 
   const [deadline, setDeadline] = useState(null);
+  const [loading, setloading] = useState(false);
 
   const imageFile = watch("image");
   const [preview, setPreview] = useState(null);
@@ -41,6 +42,7 @@ useEffect(() => {
 
   const onSubmit = async (data) => {
     try{
+      setloading(true);
       data.deadline = deadline;
       const res = await PostFunction("/api/contests", data);
       toast.success("Contest Added Successfully 🎉");
@@ -48,6 +50,8 @@ useEffect(() => {
       setDeadline(null);
     }catch(err){
       toast.error("Failed to add contest. Please try again.");
+    }finally{
+      setloading(false);
     }
   };
 
@@ -182,9 +186,9 @@ useEffect(() => {
         <div className="md:col-span-2">
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold hover:scale-[1.02] transition"
+            className="cursor-pointer w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold hover:scale-[1.02] transition"
           >
-            Create Contest
+            { loading ? "Creating..." : "Create Contest" }
           </button>
         </div>
       </form>
