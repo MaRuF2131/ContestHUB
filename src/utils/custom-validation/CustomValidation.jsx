@@ -5,10 +5,10 @@ export const StringValidationCheck = {
     return await new Promise((resolve) =>
       setTimeout(() => {
         const dangerousPatterns = [
-          /[`]/,          // backtick
-          /<script>/i,    // script tags
-          /<\/?\w+>/,     // any HTML tag
-          /on\w+=/,       // inline JS events like onclick=
+          /[`<>]/, // quotes, angle brackets, backtick
+          /<script>/i, // script tags
+          /<\/?.+?>/, // any HTML tag
+          /on\w+\s*=/i, // inline JS events like onclick=
         ];
 
         for (let pattern of dangerousPatterns) {
@@ -28,10 +28,10 @@ export const DangerousContentCheck = {
     return await new Promise((resolve) =>
       setTimeout(() => {
         const dangerousPatterns = [
-          /[`'"<>]/,          // backtick
-          /<script>/i,    // script tags
-          /<\/?\w+>/,     // any HTML tag
-          /on\w+=/,       // inline JS events like onclick=
+          /[`'"<>]/, // quotes, angle brackets, backtick
+          /<script>/i, // script tags
+          /<\/?.+?>/, // any HTML tag
+          /on\w+\s*=/i, // inline JS events like onclick=
         ];
 
         for (let pattern of dangerousPatterns) {

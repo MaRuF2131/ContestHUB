@@ -164,7 +164,7 @@ const ManageUsers = () => {
             </motion.div>
 
             {/* Clear Filters */}
-            {(filterStatus !== "all" || filterType !== "all") && (
+            {(filterType !== "all") && (
               <button
                 onClick={() => {
                   reset({ status: "all", type: "all" });
