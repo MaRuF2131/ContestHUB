@@ -14,6 +14,10 @@ import SubmittedTasks from "../pages/dashboard/creator/SubmittedTasks";
 import EditContest from "../pages/dashboard/creator/EditContest";
 import ManageUsers from "../pages/dashboard/admin/ManageUsers";
 import ManageContests from "../pages/dashboard/admin/ManageContests";
+import PrivateRoute from "./PrivateRoute";
+import CreatorPrivateRoute from "./CreatorPrivateRoute";
+import AdminPrivateRoute from "./AdminPrivateRoute";
+import MessageRoute from "./MessageRoute";
 
 
  export const Route=createBrowserRouter([
@@ -32,7 +36,10 @@ import ManageContests from "../pages/dashboard/admin/ManageContests";
         },
         {
           path:'/contest/:id',
-          element:<Details></Details>
+          element:
+          <PrivateRoute>
+            <Details></Details>
+          </PrivateRoute>
         },
         {
           path:'/login',
@@ -46,7 +53,10 @@ import ManageContests from "../pages/dashboard/admin/ManageContests";
     },
     {
       path:'/dashboard',
-      element:<DashboardLayout></DashboardLayout>,
+      element:
+      <PrivateRoute>
+        <DashboardLayout></DashboardLayout>
+      </PrivateRoute>,
       children:[
         {
           index:true,
@@ -54,29 +64,51 @@ import ManageContests from "../pages/dashboard/admin/ManageContests";
         },
         {
           path:'/dashboard/add-contest',
-          element:<AddContest></AddContest>
+          element:
+          <CreatorPrivateRoute>
+             <AddContest></AddContest>
+          </CreatorPrivateRoute>
         },
         {
           path:'/dashboard/created-contests',
-          element:<CreatedContests></CreatedContests>
+          element:
+          <CreatorPrivateRoute>
+             <CreatedContests></CreatedContests>
+          </CreatorPrivateRoute>
         },
         {
           path:'/dashboard/submitted-tasks',
-          element:<SubmittedTasks></SubmittedTasks>
+          element:
+          <CreatorPrivateRoute>
+            <SubmittedTasks></SubmittedTasks>
+          </CreatorPrivateRoute>
         },
         {
           path:'/dashboard/edit-contest',
-          element:<EditContest></EditContest>
+          element:
+          <CreatorPrivateRoute>
+            <EditContest></EditContest>
+          </CreatorPrivateRoute>
         },
         {
           path:'/dashboard/manage-users',
-          element:<ManageUsers></ManageUsers>
+          element:   
+           <AdminPrivateRoute> 
+             <ManageUsers></ManageUsers>
+           </AdminPrivateRoute>
         },
         {
           path:'/dashboard/manage-contests',
-          element:<ManageContests></ManageContests>
+          element:
+          <AdminPrivateRoute>
+            <ManageContests></ManageContests>
+           </AdminPrivateRoute>
         }
       ]
+    },
+    {
+      path: '/message',
+      element: <MessageRoute />
     },
 
     {
