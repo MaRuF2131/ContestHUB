@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import useAuth from '../../hook/UseAuth';
@@ -16,6 +16,8 @@ const Register = () => {
   const { registerWithEmail } = useAuth();
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const pth=location?.state?.from || '/'
 
   const {
     register,
@@ -34,7 +36,7 @@ const Register = () => {
       await registerWithEmail(email, password, name, photoURL);
       toast.success('Registration successful! 🎉');
       reset();
-      navigate('/');
+      navigate(pth);
     } catch (err) {
       console.error(err);
       toast.error(err.message || 'Registration failed!');

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { useForm } from 'react-hook-form';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 import useAuth from '../../hook/UseAuth.jsx';
@@ -15,6 +15,8 @@ const Login = () => {
   const { loginWithGoogle, loginWithEmail } = useAuth();
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const pth=location?.state?.from || '/'
 
   const {
     register,
@@ -32,7 +34,7 @@ const Login = () => {
     try {
       await loginWithEmail(email, password);
       toast.success('Login successful! 🎉');
-      navigate('/');
+      navigate(pth);
     } catch (err) {
       console.log(err);
       toast.error('Login failed!');
@@ -44,7 +46,7 @@ const Login = () => {
     try {
       await loginWithGoogle();
       toast.success('Logged in with Google! 🎉');
-      navigate('/');
+      navigate(pth);
     } catch (err) {
       console.error(err);
       toast.error('Google Sign-in failed!');
