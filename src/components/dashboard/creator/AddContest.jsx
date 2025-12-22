@@ -44,7 +44,7 @@ useEffect(() => {
     try{
       setloading(true);
       data.deadline = deadline;
-      const res = await PostFunction("/api/contests", data);
+      const res = await PostFunction("/creator/create", data);
       toast.success("Contest Added Successfully 🎉");
       reset();
       setDeadline(null);
@@ -138,7 +138,7 @@ useEffect(() => {
         <div>
           <label className="label">Contest Type</label>
           <select {...register("type", { required: "Contest type is required", ...DangerousContentCheck })} className="input">
-            <option value="">Select Type</option>
+            <option value="all">Select Type</option>
             <option value="Design">Design</option>
             <option value="Development">Development</option>
             <option value="Marketing">Marketing</option>
@@ -186,7 +186,8 @@ useEffect(() => {
         <div className="md:col-span-2">
           <button
             type="submit"
-            className="cursor-pointer w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold hover:scale-[1.02] transition"
+            disabled={loading}
+            className={`${loading?"":"cursor-pointer"} w-full py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-semibold hover:scale-[1.02] transition`}
           >
             { loading ? "Creating..." : "Create Contest" }
           </button>

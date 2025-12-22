@@ -1,18 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
-import { demoContests } from "../../../../demoData/demoContests";
-import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import useDebounce from "../../../utils/useDebounce";
 import Pagination from "../../../utils/Pagination";
 import { Eye, Filter, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import { FaInfoCircle } from "react-icons/fa";
 import { DangerousContentCheck } from "../../../utils/custom-validation/CustomValidation";
+import DeleteFunction from "../../../utils/DeleteFunction";
+import TableLoader from "../../loader/TableLoader";
+import NoDataIndicator from "../../common/NodataIndicator";
+import FinishIndicator from "../../common/FinishIndicator";
+import UpdateFunction from "../../../utils/UpdateFunction";
+import ContestDetailsView from "../../common/ContestDetailsView";
 
 const ManageContests = () => {
-  const [contests, setContests] = useState(demoContests);
-
+  const [contests, setContests] = useState([]);
+  const [total,settotal]=useState(0)
+  const [details,setdetails]=useState(null)
+  const D=DeleteFunction();
+  const M=UpdateFunction();
   const {register, watch,reset, formState: { errors }} = useForm({
       mode:"onChange", 
       criteriaMode: "all",
@@ -27,28 +33,39 @@ const ManageContests = () => {
     const filterStatus= watch("status");
     const filterType= watch("type");
     const loadMoreRef = useRef();
-    const PaginationRef=useRef({});
   
-        const {
-        data,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        status
-       } = PaginationRef.current || {};
-  
-    const getData=async(keyValuepair={},search)=>{
-        PaginationRef.current = await Pagination({url:"/api/contests",keyValuepair:keyValuepair,search:search,page:1,limit:10});
+  const {
+      data,
+      fetchNextPage,
+      hasNextPage,
+      isFetchingNextPage,
+      isFetching,
+      status
+     } = Pagination({
+      url:"/admin/get/contest",
+      keyValuepair:{
+        type:filterType || "all",
+        search:searchTerm || '',
+        status:filterStatus || "all"
+        },
+        page:1,limit:10
+      });
+
+    const handleDelete = (id) => {
+       D.mutate({url:'admin',id:id,query:{url:"/admin/get/contest",search:searchTerm || '',type:filterType || 'all',status:filterStatus || "all"}});
+  };
+ 
+ useEffect(()=>{
+  console.log("data",data);
+    if(data){ 
+      const value=data?.pages?.flatMap((page) => page?.data?.data) || []; 
+      setContests(value);
+      const len=data?.pages.length || 0
+      const tl=data?.pages[len-1]?.data?.total || 0
+      settotal(parseInt(tl));
     }
-  
-  
-    useEffect(() => {
-      if( errors?.search?.message || errors?.status?.message || errors?.type?.message ){
-         reset({ search: "", status: "all", type: "all" });
-         return;
-      }
-       getData({"status":filterStatus, "type":filterType, "search":searchTerm}); 
-    }, [searchTerm, filterStatus, filterType]); 
+  },[data])
+   
   
     useEffect(() => {
       if (!loadMoreRef.current) return;
@@ -65,17 +82,12 @@ const ManageContests = () => {
     }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const handleContestAction = (id, action) => {
-    if (action === "delete") {
-      setContests(contests.filter(c => c.id !== id));
-      toast.success("Contest deleted!");
-    } else {
-      setContests(contests.map(c => c.id === id ? { ...c, status: action } : c));
-      toast.success(`Contest ${action}!`);
-    }
+      M.mutate({url:'admin/contest',body:{status:action},id:id,query:{url:"/admin/get/contest",search:searchTerm || '',type:filterType || 'all',status:filterStatus || "all"}});
   };
 
   return (
-    <div className="p-4 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg">
+    <>
+    <div className="relative p-4  bg-white dark:bg-zinc-900 rounded-2xl shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-zinc-800 dark:text-white">Manage Contests</h2>
               <div className="flex flex-col gap-5 mb-8">
       
@@ -133,7 +145,7 @@ const ManageContests = () => {
                     <div className="px-4 py-2 rounded-full
                       bg-gradient-to-r from-pink-500 to-purple-500
                       text-white text-sm font-semibold shadow-md">
-                      📊 {contests.length} Results
+                      📊 {total} Results
                     </div>
       
                   </div>
@@ -179,7 +191,7 @@ const ManageContests = () => {
                     >
                       <option value="all">All Types</option>
                       <option value="Design">Design</option>
-                      <option value="Writing">Writing</option>
+                      <option value="Content Writing">Writing</option>
                       <option value="Development">Development</option>
                       <option value="Marketing">Marketing</option>
                     </select>
@@ -217,7 +229,7 @@ const ManageContests = () => {
           </thead>
           <tbody>
             {contests.map(contest => (
-              <tr key={contest.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800">
+              <tr key={contest._id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800">
                 <td className="px-4 py-2">{contest.name}</td>
                 <td className="px-4 py-2">{contest.creator}</td>
                 <td className={`px-4 py-2 font-semibold ${
@@ -226,25 +238,25 @@ const ManageContests = () => {
                 }`}>{contest.status}</td>
                 <td className="px-4 py-2 flex gap-2">
                   <button
-                    onClick={() => handleContestAction(contest.id, "Confirmed")}
+                    onClick={(e) =>{e.stopPropagation(); handleContestAction(contest._id, "Confirmed")}}
                     className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600"
                   >
                     Confirm
                   </button>
                   <button
-                    onClick={() => handleContestAction(contest.id, "Rejected")}
+                    onClick={(e) =>{e.stopPropagation(); handleContestAction(contest._id, "Rejected")}}
                     className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
                   >
                     Reject
                   </button>
                   <button
-                    onClick={() => handleContestAction(contest.id, "delete")}
+                    onClick={(e) =>{e.stopPropagation() ; handleDelete(contest._id)}}
                     className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600"
                   >
                     Delete
                   </button>
 
-                    <button className="p-1 rounded bg-purple-500 text-white hover:bg-purple-600">
+                    <button onClick={()=> setdetails(contest)}  className="p-1 rounded bg-purple-500 text-white hover:bg-purple-600">
                       <Eye className="w-4 h-4" />
                     </button>
                 </td>
@@ -253,27 +265,26 @@ const ManageContests = () => {
           </tbody>
         </table>
       </div>
-
+                    {/* details section */}
+                   {details &&(
+                    <div className="absolute top-0 -left-2 -right-2 bg-white dark:bg-zinc-900">
+                        <X onClick={(e)=>{e.stopPropagation();setdetails(null)}} className="w-6 h-6 float-right cursor-pointer dark:text-white text-black hover:text-pink-500" />
+                       <ContestDetailsView contest={details} ></ContestDetailsView>
+                    </div>
+                   )}
               {/* Load more / end indicator */}
         <div ref={loadMoreRef} className="w-full text-center mt-8">
-          {isFetchingNextPage && (
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-              <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">
-                Loading more achievements...
-              </span>
-            </div>
-          )}
-          {!hasNextPage && data?.pages[0]?.data?.length > 0 && (
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl shadow-lg">
-              <FaInfoCircle />
-              <span className="font-medium">
-                All achievements loaded successfully
-              </span>
-            </div>
-          )}
+              {(isFetching || isFetchingNextPage)  && <TableLoader ms={"Contest"}></TableLoader>}
         </div>
+        {/* no data indicator  */}
+        {(!hasNextPage && contests?.length <= 0 && !isFetching && !isFetchingNextPage && status==="success") &&(
+          <NoDataIndicator message="Contest"></NoDataIndicator>
+        )}
     </div>
+          {!hasNextPage && data?.pages[0]?.data?.data.length > 0 && (
+             <FinishIndicator ms={"All Contest Loaded"}></FinishIndicator>
+          )}
+    </>
   );
 };
 

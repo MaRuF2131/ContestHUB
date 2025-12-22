@@ -2,11 +2,15 @@ import React, { useEffect, useRef, useState } from "react";
 import { Pencil, Trash2, Eye, Filter, X, Search } from "lucide-react";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import { demoContests } from "../../../../demoData/demoContests";
 import Pagination from "../../../utils/Pagination";
 import useDebounce from "../../../utils/useDebounce";
 import { useForm } from "react-hook-form";
 import { DangerousContentCheck }from "../../../utils/custom-validation/CustomValidation"
+import NoDataIndicator from "../../common/NodataIndicator";
+import TableLoader from "../../loader/TableLoader";
+import FinishIndicator from "../../common/FinishIndicator";
+import DeleteFunction from "../../../utils/DeleteFunction";
+import EditContest from "./EditContest";
 
 const MyCreatedContests = () => {
   const {register, watch,reset, formState: { errors }} = useForm({
@@ -18,38 +22,47 @@ const MyCreatedContests = () => {
       search:""
     }
   });
-  const [contests, setContests] = useState(demoContests);
+  const D=DeleteFunction();
+  const [contests, setContests] = useState([]);
+  const [edit,setedit]=useState(null)
+  const [total,settotal]=useState(0)
   const searchTerm = watch("search");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
   const filterStatus= watch("status");
   const filterType= watch("type");
   const loadMoreRef = useRef();
-  const PaginationRef=useRef({});
 
-      const {
+    const {
       data,
       fetchNextPage,
       hasNextPage,
       isFetchingNextPage,
+      isFetching,
       status
-     } = PaginationRef.current || {};
-
-  const getData=async(keyValuepair={},search)=>{
-      PaginationRef.current = await Pagination({url:"/api/contests",keyValuepair:keyValuepair,search:search,page:1,limit:10});
-  }
+     } = Pagination({
+      url:"/creator/get",
+      keyValuepair:{
+        type:filterType || "all",
+        search:searchTerm || '',
+        status:filterStatus || "all"
+        },
+        page:1,limit:10
+      });
 
     const handleDelete = (id) => {
-    setContests(contests.filter((c) => c.id !== id));
-    toast.success("Contest deleted successfully");
+       D.mutate({url:'creator',id:id,query:{url:"/creator/get",search:searchTerm || '',type:filterType || 'all',status:filterStatus || "all"}});
   };
-
-  useEffect(() => {
-    if( errors?.search?.message || errors?.status?.message || errors?.type?.message ){
-       reset({ search: "", status: "all", type: "all" });
-       return;
+ 
+ useEffect(()=>{
+  console.log("data",data);
+    if(data){ 
+      const value=data?.pages?.flatMap((page) => page?.data?.data) || []; 
+      setContests(value);
+      const len=data?.pages.length || 0
+      const tl=data?.pages[len-1]?.data?.total || 0
+      settotal(parseInt(tl));
     }
-     getData({"status":filterStatus, "type":filterType, "search":searchTerm}); 
-  }, [searchTerm, filterStatus, filterType]); 
+  },[data])
 
   useEffect(() => {
     if (!loadMoreRef.current) return;
@@ -65,8 +78,10 @@ const MyCreatedContests = () => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
+
   return (
-    <div className="p-4 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg">
+    <>
+    <div className=" relative  p-4 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-zinc-800 dark:text-white">
         My Created Contests
       </h2>
@@ -127,7 +142,7 @@ const MyCreatedContests = () => {
               <div className="px-4 py-2 rounded-full
                 bg-gradient-to-r from-pink-500 to-purple-500
                 text-white text-sm font-semibold shadow-md">
-                📊 {contests.length} Results
+                📊 {total} Results
               </div>
 
             </div>
@@ -216,7 +231,7 @@ const MyCreatedContests = () => {
           </thead>
           <tbody>
             {contests.map((contest) => (
-              <tr key={contest.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800">
+              <tr key={contest._id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800">
                 <td className="px-4 py-2">{contest.name}</td>
                 <td className="px-4 py-2">{contest.type}</td>
                 <td className="px-4 py-2">{contest.participants}</td>
@@ -231,11 +246,13 @@ const MyCreatedContests = () => {
                 <td className="px-4 py-2 flex gap-2">
                   {contest.status === "Pending" && (
                     <>
-                      <button className="p-1 rounded bg-blue-500 text-white hover:bg-blue-600">
+                      <button 
+                         onClick={()=>setedit(contest)}
+                         className="p-1 rounded bg-blue-500 text-white hover:bg-blue-600">
                         <Pencil className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDelete(contest.id)}
+                        onClick={() => handleDelete(contest._id)}
                         className="p-1 rounded bg-red-500 text-white hover:bg-red-600"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -252,26 +269,25 @@ const MyCreatedContests = () => {
         </table>
       </div>
 
-        {/* Load more / end indicator */}
+          {/* edit section */}
+         {edit &&(
+          <div className="absolute top-0 -left-2 -right-2 bg-white dark:bg-zinc-900">
+             <EditContest contest={edit} onClose={()=>setedit(null)}></EditContest>
+          </div>
+         )}
+              {/* Load more / end indicator */}
         <div ref={loadMoreRef} className="w-full text-center mt-8">
-          {isFetchingNextPage && (
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-              <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">
-                Loading more achievements...
-              </span>
-            </div>
-          )}
-          {!hasNextPage && data?.pages[0]?.data?.length > 0 && (
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl shadow-lg">
-              <FaInfoCircle />
-              <span className="font-medium">
-                All achievements loaded successfully
-              </span>
-            </div>
-          )}
+              {(isFetching || isFetchingNextPage)  && <TableLoader ms={"Contest"}></TableLoader>}
         </div>
+        {/* no data indicator  */}
+        {(!hasNextPage && contests?.length <= 0 && !isFetching && !isFetchingNextPage && status==="success") &&(
+          <NoDataIndicator message="Contest"></NoDataIndicator>
+        )}
     </div>
+          {!hasNextPage && data?.pages[0]?.data?.data.length > 0 && (
+             <FinishIndicator ms={"All Contest Loaded"}></FinishIndicator>
+          )}
+    </>
   );
 };
 

@@ -1,5 +1,6 @@
 import { useInfiniteQuery} from '@tanstack/react-query';
 import axiosInstance from './api/axios';
+import useAuth from '../hook/UseAuth';
 
 const fetchData=async (url,keyValuepair,pageParam,limit)=>{
     if(!url || !keyValuepair){  
@@ -15,13 +16,16 @@ const fetchData=async (url,keyValuepair,pageParam,limit)=>{
     const newUrl = params.toString();
     try{
       const response = await axiosInstance.get(`${url}?${newUrl}`);
-      if(response.status !== 200){
+      console.log("res",response);
+          
+      if(response.status == 401){
+        console.log("errr",error);
         throw new Error("Failed to fetch paginated data");
       }
         return {
-        data: response.data,
+        data:{data:response?.data?.data || [],total:response?.data?.pagination?.total},
         nextPage:
-          response.pagination.page < response.pagination.totalPages
+          response?.data?.pagination?.page < response?.data?.pagination?.totalPages
             ? pageParam + 1
             : undefined,
       };
@@ -30,21 +34,13 @@ const fetchData=async (url,keyValuepair,pageParam,limit)=>{
     }
 }
 
-async function Pagination({url,keyValuepair={},page=1,limit=10}=info) {
-
-    const{
-        data,
-        isError,
-        isFetching,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        status,
-        refetch 
-    }=useInfiniteQuery({
-     queryKey: [keyValuepair],
+ function Pagination({url,keyValuepair={},page=1,limit=10}=info) {
+  const{user}=useAuth();
+    return useInfiniteQuery({
+     queryKey: [url,keyValuepair?.type,keyValuepair?.search,keyValuepair?.status],
      queryFn:({pageParam=page})=>fetchData(url,keyValuepair,pageParam,limit),
      getNextPageParam: (lastPage) => lastPage.nextPage,
+     enabled:!!user?.uid,
      staleTime: 5 * 60 * 1000, // 5 minutes
      cacheTime: 5 * 60 * 1000, // 5 minutes
      retry:2,
@@ -52,19 +48,6 @@ async function Pagination({url,keyValuepair={},page=1,limit=10}=info) {
      refetchOnReconnect: true,
      refetchOnWindowFocus: false,
     })
-
-  return (
-    {
-      data,
-      isError,
-      isFetching,
-      fetchNextPage,
-      hasNextPage,
-      isFetchingNextPage,
-      status,
-      refetch
-    }
-  )
 }
 
 export default Pagination

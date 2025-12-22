@@ -10,8 +10,11 @@ export const PostFunction = async (url, data) => {
       }
       newData.append(key,value);
     });  
+
+    console.log("data",data);
+    
   const response = await axiosInstance.post(url, newData);
-  if (!response.ok) {
+  if (!response?.data?.success) {
     throw new Error("Failed to post data");
   }
   return response.data;

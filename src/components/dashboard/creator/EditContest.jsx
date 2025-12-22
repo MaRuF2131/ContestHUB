@@ -7,20 +7,7 @@ import toast from "react-hot-toast";
 import { DangerousContentCheck, FilCheck, NumberValidationCheck, StringValidationCheck } from "../../../utils/custom-validation/CustomValidation";
 import { PostFunction } from "../../../utils/PostFunction";
 
-const demoContest = {
-  id: 1,
-  name: "Logo Design Challenge",
-  image: "https://via.placeholder.com/150", 
-  description: "Create a logo for a new startup",
-  price: 50,
-  prizeMoney: 200,
-  taskInstruction: "Submit a vector file",
-  type: "Design",
-  deadline: new Date(),
-};
-
-
-const EditContest = () => {
+const EditContest = ({contest,onClose}) => {
   const {
     register,
     handleSubmit,
@@ -31,7 +18,16 @@ const EditContest = () => {
     {
       mode:"onChange", 
       criteriaMode: "all",
-      defaultValues: demoContest,
+      defaultValues:{
+      name:contest?.name,
+      price:contest?.price,
+      prizeMoney:contest?.prizeMoney,
+      type:contest?.type,
+      description:contest?.description,
+      taskInstruction:contest?.taskInstruction,
+      deadline:contest?.deadline,
+      image:contest?.imageUrl,
+      }
     }
   );
 
@@ -40,6 +36,21 @@ const EditContest = () => {
 
   const imageFile = watch("image");
   const [preview, setPreview] = useState(null);
+
+  useEffect(()=>{
+    if(contest){
+       reset({
+          name:contest?.name,
+          price:contest?.price,
+          prizeMoney:contest?.prizeMoney,
+          type:contest?.type,
+          description:contest?.description,
+          taskInstruction:contest?.taskInstruction,
+          deadline:contest?.deadline,
+          image:contest?.imageUrl,
+      })
+    }
+  },[contest])
 
 useEffect(() => {
   if ((!imageFile || imageFile.length === 0 || errors?.image?.message) ) {   
@@ -55,6 +66,7 @@ useEffect(() => {
 
   return () => URL.revokeObjectURL(objectUrl);
 }, [imageFile, errors?.image?.message]);
+
 
 
   const onSubmit = async (data) => {
@@ -74,10 +86,13 @@ useEffect(() => {
 
   return (
     <div className="max-w-4xl mx-auto bg-white dark:bg-zinc-900 rounded-2xl shadow-lg p-8">
-      <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-zinc-800 dark:text-white">
-        <PlusCircle className="w-6 h-6 text-pink-500" />
-        Edit Contest
-      </h2>
+      <div className="w-full inline-flex justify-between items-center">
+          <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-zinc-800 dark:text-white">
+            <PlusCircle className="w-6 h-6 text-pink-500" />
+            Edit Contest
+          </h2>
+          <X onClick={(e)=>{e.stopPropagation();onClose()}} className="w-6 h-6 cursor-pointer dark:text-white text-black hover:text-pink-500" />
+      </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-6">
 

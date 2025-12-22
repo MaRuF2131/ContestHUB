@@ -8,51 +8,43 @@ import { Filter, Search, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { FaInfoCircle } from "react-icons/fa";
 import { DangerousContentCheck } from "../../../utils/custom-validation/CustomValidation";
+import TableLoader from "../../loader/TableLoader";
+import FinishIndigator from "../../common/FinishIndicator";
+import NoDataIndicator from "../../common/NodataIndicator";
+import UpdateFunction from "../../../utils/UpdateFunction";
 
 const roles = ["user", "creator", "admin"];
 
 const ManageUsers = () => {
-  const [users, setUsers] = useState(demoUsers);
-
-  const handleRoleChange = (id, newRole) => {
-    setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u));
-    toast.success("User role updated!");
-  };
-
+  const [users, setUsers] = useState([]);
+  const [total,settotal]=useState(0);
   const {register, watch,reset, formState: { errors }} = useForm({
     mode:"onChange", 
     criteriaMode: "all",
     defaultValues:{
-      type:"all",
+      role:"all",
       search:""
     }
   });
+  const M= UpdateFunction();
   const searchTerm = watch("search");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
-  const filterType= watch("type");
+  const filterType= watch("role");
   const loadMoreRef = useRef();
-  const PaginationRef=useRef({});
-
-      const {
+  const {
       data,
       fetchNextPage,
       hasNextPage,
       isFetchingNextPage,
+      isFetching,
       status
-     } = PaginationRef.current || {};
-
-  const getData=async(keyValuepair={},search)=>{
-      PaginationRef.current = await Pagination({url:"/api/contests",keyValuepair:keyValuepair,search:search,page:1,limit:10});
-  }
-
-
-  useEffect(() => {
-    if( errors?.search?.message || errors?.status?.message || errors?.type?.message ){
-       reset({ search: "", status: "all", type: "all" });
-       return;
-    }
-     getData({"type":filterType, "search":searchTerm}); 
-  }, [searchTerm, filterType]); 
+     } = Pagination(
+  {
+    url:"/admin/get/user",  
+    keyValuepair: {
+    search: searchTerm,
+    type: filterType || 'all',
+  },page:1,limit:10});
 
   useEffect(() => {
     if (!loadMoreRef.current) return;
@@ -68,7 +60,26 @@ const ManageUsers = () => {
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
+ useEffect(()=>{
+  console.log("data",data);
+  
+    if(data){ 
+      const value=data?.pages?.flatMap((page) => page?.data?.data) || []; 
+      setUsers(value);
+      const len=data?.pages.length || 0
+      const tl=data?.pages[len-1]?.data?.total || 0
+      settotal(parseInt(tl));
+    }
+  },[data])
+
+   const handleUpdate = async(id,body) => {
+     M.mutate({url:'admin/user',body:body,id:id,query:{url:"/admin/get/user",search:searchTerm,type:filterType || 'all',}});
+  };
+
+
+
   return (
+    <>
     <div className="p-4 bg-white dark:bg-zinc-900 rounded-2xl shadow-lg">
       <h2 className="text-2xl font-bold mb-4 text-zinc-800 dark:text-white">Manage Users</h2>
        
@@ -105,7 +116,7 @@ const ManageUsers = () => {
               {/* Clear Search */}
               {searchTerm && (
                 <button
-                  onClick={()=>reset({ search: "" })}
+                  onClick={()=>reset({search: ""})}
                   className="absolute right-4 top-1/2 -translate-y-1/2
                   text-zinc-400 hover:text-pink-500 transition"
                 >
@@ -128,7 +139,7 @@ const ManageUsers = () => {
               <div className="px-4 py-2 rounded-full
                 bg-gradient-to-r from-pink-500 to-purple-500
                 text-white text-sm font-semibold shadow-md">
-                📊 {users.length} Results
+                📊 {total} Results
               </div>
 
             </div>
@@ -146,7 +157,7 @@ const ManageUsers = () => {
             {/* Type */}
             <motion.div whileHover={{ scale: 1.03 }} className="relative">
               <select
-                {...register("type",{ ...DangerousContentCheck })}
+                {...register("role",{ ...DangerousContentCheck })}
                 className="appearance-none px-4 py-2 pr-10 rounded-xl
                 bg-zinc-100 dark:bg-zinc-800
                 border border-zinc-200 dark:border-zinc-700
@@ -154,9 +165,9 @@ const ManageUsers = () => {
                 focus:outline-none focus:ring-2 focus:ring-purple-400"
               >
                 <option value="all">All Types</option>
-                <option value="Design">User</option>
-                <option value="Writing">Creator</option>
-                <option value="Development">Admin</option>
+                <option value="user">User</option>
+                <option value="creator">Creator</option>
+                <option value="admin">Admin</option>
               </select>
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-purple-500">
                 ▼
@@ -167,7 +178,7 @@ const ManageUsers = () => {
             {(filterType !== "all") && (
               <button
                 onClick={() => {
-                  reset({ status: "all", type: "all" });
+                  reset({role: "all" });
                 }}
                 className="inline-flex items-center gap-1 px-4 py-2 rounded-full
                 bg-pink-100 dark:bg-pink-500/20
@@ -182,7 +193,7 @@ const ManageUsers = () => {
         </div>
 
       <div className="overflow-x-auto text-black dark:text-white">
-        <table className="min-w-full table-auto border-collapse border border-zinc-200 dark:border-zinc-700">
+        <table className="min-w-full mx-auto table-auto border-collapse border border-zinc-200 dark:border-zinc-700">
           <thead>
             <tr className="bg-zinc-100 dark:bg-zinc-800 text-left">
               <th className="px-4 py-2 border-b border-zinc-200 dark:border-zinc-700">Name</th>
@@ -198,7 +209,7 @@ const ManageUsers = () => {
                 <td className="px-4 py-2">
                   <select
                     value={user.role}
-                    onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                    onChange={(e) => handleUpdate(user._id, {role:e.target.value})}
                     className="px-2 py-1 rounded border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-white"
                   >
                     {roles.map(r => (
@@ -213,24 +224,17 @@ const ManageUsers = () => {
       </div>
               {/* Load more / end indicator */}
         <div ref={loadMoreRef} className="w-full text-center mt-8">
-          {isFetchingNextPage && (
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-              <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">
-                Loading more achievements...
-              </span>
-            </div>
-          )}
-          {!hasNextPage && data?.pages[0]?.data?.length > 0 && (
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl shadow-lg">
-              <FaInfoCircle />
-              <span className="font-medium">
-                All achievements loaded successfully
-              </span>
-            </div>
-          )}
+              {(isFetching || isFetchingNextPage)  && <TableLoader ms={"users"}></TableLoader>}
         </div>
+        {/* no data indicator  */}
+        {(!hasNextPage && users?.length <= 0 && !isFetching && !isFetchingNextPage && status==="success") &&(
+          <NoDataIndicator message="Users"></NoDataIndicator>
+        )}
     </div>
+          {!hasNextPage && data?.pages[0]?.data?.data.length > 0 && (
+             <FinishIndigator ms={"All User Loaded"}></FinishIndigator>
+          )}
+    </>
   );
 };
 

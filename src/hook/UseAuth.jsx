@@ -39,10 +39,9 @@ const useAuth = () => {
         email: user.email,
         role: 'user',
       };
-
-      setUserInterceptor(userData);
-      const res = await axiosInstance.post('/api/auth/login', userData);
+      const res = await axiosInstance.post('/authin/login', userData);
       console.log('✅ Synced to backend:', res.data.role);
+      setUserInterceptor(res?.data?.token);
       return res.data;
     },
     staleTime: Infinity,
