@@ -103,7 +103,7 @@ const useAuth = () => {
     try {
       await signOut(auth);
       await axiosInstance.post('/logout');
-      queryClient.removeQueries({ queryKey: ['user-sync', user?.uid] }); // ✅ Just one
+      queryClient.removeQueries({ queryKey: ['user-sync', user?.uid] }); //  Just one
     } catch (error) {
       console.error('Logout failed:', error.message);
       throw error;

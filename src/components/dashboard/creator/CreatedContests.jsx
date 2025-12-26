@@ -11,6 +11,7 @@ import TableLoader from "../../loader/TableLoader";
 import FinishIndicator from "../../common/FinishIndicator";
 import DeleteFunction from "../../../utils/DeleteFunction";
 import EditContest from "./EditContest";
+import ContestDetailsView from "../../common/ContestDetailsView";
 
 const MyCreatedContests = () => {
   const {register, watch,reset, formState: { errors }} = useForm({
@@ -25,6 +26,7 @@ const MyCreatedContests = () => {
   const D=DeleteFunction();
   const [contests, setContests] = useState([]);
   const [edit,setedit]=useState(null)
+  const [details,setdetails]=useState(null)
   const [total,settotal]=useState(0)
   const searchTerm = watch("search");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -259,7 +261,7 @@ const MyCreatedContests = () => {
                       </button>
                     </>
                   )}
-                  <button className="p-1 rounded bg-purple-500 text-white hover:bg-purple-600">
+                  <button onClick={()=>setdetails(contest)} className="p-1 rounded bg-purple-500 text-white hover:bg-purple-600">
                     <Eye className="w-4 h-4" />
                   </button>
                 </td>
@@ -268,6 +270,14 @@ const MyCreatedContests = () => {
           </tbody>
         </table>
       </div>
+
+        {/* details section */}
+       {details &&(
+          <div className="absolute top-0 -left-2 -right-2 bg-white dark:bg-zinc-900">
+              <X onClick={(e)=>{e.stopPropagation();setdetails(null)}} className="w-6 h-6 float-right cursor-pointer dark:text-white text-black hover:text-pink-500" />
+              <ContestDetailsView contest={details} ></ContestDetailsView>
+          </div>
+          )}
 
           {/* edit section */}
          {edit &&(

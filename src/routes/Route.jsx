@@ -18,6 +18,10 @@ import PrivateRoute from "./PrivateRoute";
 import CreatorPrivateRoute from "./CreatorPrivateRoute";
 import AdminPrivateRoute from "./AdminPrivateRoute";
 import MessageRoute from "./MessageRoute";
+import Profile from "../pages/dashboard/user/Profile";
+import WinningContests from "../pages/dashboard/user/WinningContests";
+import ParticipatedContests from "../pages/dashboard/user/ParticipatedContests";
+import NormalUserPrivateRoute from "./NormalUserPrivateRoute";
 
 
  export const Route=createBrowserRouter([
@@ -61,6 +65,27 @@ import MessageRoute from "./MessageRoute";
         {
           index:true,
           element:<DashboardHome></DashboardHome>
+        },
+        {
+          path:'/dashboard/profile',
+          element:
+          <NormalUserPrivateRoute>
+            <Profile></Profile>
+          </NormalUserPrivateRoute>
+        },
+        {
+          path:'/dashboard/winning',
+          element:
+          <NormalUserPrivateRoute>
+            <WinningContests></WinningContests>
+          </NormalUserPrivateRoute>
+        },
+        {
+          path:'/dashboard/participated',
+          element:
+          <NormalUserPrivateRoute>
+            <ParticipatedContests></ParticipatedContests>
+          </NormalUserPrivateRoute> 
         },
         {
           path:'/dashboard/add-contest',
