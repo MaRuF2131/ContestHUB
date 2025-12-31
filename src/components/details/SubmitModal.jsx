@@ -9,7 +9,7 @@ const SubmitModal = ({ close }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+    <div className="fixed inset-0 z-[999] bg-black/50 flex items-center justify-center">
       <div className="bg-white p-6 rounded-xl w-96">
         <h2 className="text-xl font-bold mb-4">Submit Your Task</h2>
 
@@ -24,13 +24,13 @@ const SubmitModal = ({ close }) => {
             <button
               type="button"
               onClick={close}
-              className="px-4 py-2 bg-gray-300 rounded"
+              className="cursor-pointer px-4 py-2 bg-gray-300 rounded"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded"
+              className="cursor-pointer px-4 py-2 bg-blue-600 text-white rounded"
             >
               Submit
             </button>

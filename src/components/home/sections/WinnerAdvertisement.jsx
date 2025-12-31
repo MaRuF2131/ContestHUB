@@ -3,7 +3,7 @@ import winners from "../../../../demoData/winners.json";
 
 const WinnerAdvertisement = () => {
   return (
-    <div className="mt-28 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 py-20">
+    <div className="pt-28 bg-gradient-to-r from-blue-600/30 via-purple-600/60 to-pink-600 bg-blend-color py-20">
       <div className="max-w-7xl mx-auto px-4 text-center text-white">
         
         {/* Section Title */}

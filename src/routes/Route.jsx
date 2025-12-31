@@ -22,6 +22,7 @@ import Profile from "../pages/dashboard/user/Profile";
 import WinningContests from "../pages/dashboard/user/WinningContests";
 import ParticipatedContests from "../pages/dashboard/user/ParticipatedContests";
 import NormalUserPrivateRoute from "./NormalUserPrivateRoute";
+import Leaderboard from "../pages/leaderBoard/Leaderboard";
 
 
  export const Route=createBrowserRouter([
@@ -43,6 +44,13 @@ import NormalUserPrivateRoute from "./NormalUserPrivateRoute";
           element:
           <PrivateRoute>
             <Details></Details>
+          </PrivateRoute>
+        },
+        {
+          path:'/leaderboard',
+          element:
+          <PrivateRoute>
+            <Leaderboard></Leaderboard>
           </PrivateRoute>
         },
         {

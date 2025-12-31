@@ -1,12 +1,10 @@
 import React from 'react'
-import ContestCard from '../components/contestPage/ContestCard'
-import ContestTab from '../components/contestPage/ContestTab'
+import Contests from '../components/contestPage/Contests'
 
 function Contest() {
   return (
     <div>
-        <ContestTab></ContestTab>
-        <ContestCard></ContestCard>
+        <Contests></Contests>
     </div>
   )
 }
